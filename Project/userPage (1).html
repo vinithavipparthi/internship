@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Create User (POST)</title>
+  <style>
+    body {
+      font-family: Arial;
+      padding: 20px;
+    }
+    input, button {
+      padding: 8px;
+      margin: 5px 0;
+      width: 100%;
+    }
+    .response {
+      margin-top: 20px;
+      padding: 10px;
+      border: 1px solid green;
+      border-radius: 5px;
+      background-color: #f0fff0;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>👤 Create New User</h2>
+
+  <label for="name">Name:</label>
+  <input type="text" id="name" value="jai">
+
+  <label for="email">Email:</label>
+  <input type="email" id="email" value="jai@example.com">
+
+  <button onclick="createUser()">Create User</button>
+
+  <div id="result"></div>
+
+  <script>
+    function createUser() {
+      const name = document.getElementById('name').value;
+      const email = document.getElementById('email').value;
+      const resultDiv = document.getElementById('result');
+
+      resultDiv.innerHTML = 'Creating user...';
+
+      fetch('http://localhost:8080/api/users', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ name: name, email: email })
+      })
+      .then(function(response) {
+        if (!response.ok) {
+          throw new Error(`HTTP Error! Status: ${response.status}`);
+        }
+        return response.json();
+      })
+      .then(function(data) {
+        resultDiv.className = 'response';
+        resultDiv.innerHTML = `
+          <strong>User Created Successfully:</strong><br>
+          <b>ID:</b> ${data.id}<br>
+          <b>Name:</b> ${data.name}<br>
+          <b>Email:</b> ${data.email}
+        `;
+      })
+      .catch(function(error) {
+        resultDiv.className = 'error';
+        resultDiv.textContent = `Error: ${error.message}`;
+      });
+    }
+  </script>
+
+</body>
+</html>
